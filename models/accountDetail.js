@@ -14,4 +14,4 @@ const AccountDetail = new Scheme(
   }
 );
 
-module.exports = mongoose.model("accountdetail", AccountDetail);
+module.exports = mongoose.model("account_detail", AccountDetail);
