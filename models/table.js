@@ -4,7 +4,8 @@ const Scheme = mongoose.Schema;
 const Tables = new Scheme(
   {
     table_name: { type: String, maxlength: 255 },
-    table_status: { type: Number }, // 0: con` trong, 1: ban da su dung, 2: het ban
+    table_status: { type: Number, default: 0 }, // 0: con` trong, 1: ban da su dung
+    oder_name: {type: String},
     id_account: { type: Scheme.Types.ObjectId, ref: "account" },
   },
   {
