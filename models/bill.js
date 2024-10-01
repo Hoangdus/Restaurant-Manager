@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const billSchema = new Schema({
-  table: { 
+  id_table: { 
     type: Schema.Types.ObjectId, 
     ref: 'table', 
     required: true 
@@ -13,7 +13,7 @@ const billSchema = new Schema({
   },
   bill_status: {
     type: Number,
-    enum: [0,1], 
+    enum: [0,1], //0:đang cho,1:da thanh toán
     default: 0
   },
  
