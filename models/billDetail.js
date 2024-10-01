@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const billDetailSchema = new Schema({
-    bill: {
+    id_bill: {
       type: Schema.Types.ObjectId,
       ref: 'bill', 
       required: true
     },
-    meal: {
+    id_meal: {
       type: Schema.Types.ObjectId,
       ref: 'meal', 
       required: true
