@@ -1,5 +1,6 @@
 const express = require('express')
-const router = express.Router()
+const router = express.Router();
+
 const Bill = require('../models/bill');
 const BillDetail = require('../models/billDetail');
 const Ingredient = require('../models/ingredient');
@@ -50,15 +51,10 @@ router.post('/bill/add-bill', async (req, res) => {
   });
   
   // Cập nhật hóa đơn
-  router.put('/bill/update-by-id/:id', async (req, res) => {
+router.put('/bill/update-by-id/:id', async (req, res) => {
     try {
-      const allowedUpdates = ['customerName', 'totalAmount', 'paymentMethod', 'items', 'status'];
-      const updates = {};
-      allowedUpdates.forEach(field => {
-        if (req.body[field] !== undefined) updates[field] = req.body[field];
-      });
-  
-      const updatedBill = await Bill.findByIdAndUpdate(req.params.id, updates, { new: true });
+      // Cập nhật hóa đơn
+      const updatedBill = await Bill.findByIdAndUpdate(req.params.id, req.body, { new: true });
       if (!updatedBill) return res.status(404).json({ message: 'Bill not found' });
   
       res.status(200).json({
