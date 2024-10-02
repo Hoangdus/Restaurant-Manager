@@ -18,5 +18,5 @@ const billDetailSchema = new Schema({
     }
   }, { timestamps: true });
   
-  module.exports = mongoose.model('billDetail', billDetailSchema);
+  module.exports = mongoose.model('bill_detail', billDetailSchema);
   
