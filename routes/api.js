@@ -85,7 +85,7 @@ router.post("/login", async (req, res) => {
 });
 
 // Put user information
-router.put("/user/:id", upload.single("avatar"), async (req, res) => {
+router.put("/user", upload.single("avatar"), async (req, res) => {
   try {
     const data = req.body;
     const { file } = req;
@@ -117,7 +117,7 @@ router.put("/user/:id", upload.single("avatar"), async (req, res) => {
     await accountDetail.save();
 
     res.status(200).json({
-      message: "Cập nhật thông tin thành công",
+      message: "Update user successfully",
       user: {
         username: user.username,
         role: user.role,
@@ -128,12 +128,12 @@ router.put("/user/:id", upload.single("avatar"), async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi máy chủ", error });
+    res.status(500).json({ message: "Server error", error });
   }
 });
 
 // Get user information
-router.get("/user/:id", async (req, res) => {
+router.get("/user", async (req, res) => {
   try {
     // get header authorization from request
     const authHeader = req.headers.authorization;
