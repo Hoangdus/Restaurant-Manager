@@ -6,8 +6,6 @@ const upload = require("../config/common/upload");
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
-//VIẾT CODE API VÀO ĐÂY
-
 const User = require("../models/account");
 const AccountDetail = require("../models/accountDetail");
 const Table = require("../models/table");
