@@ -1,12 +1,25 @@
+require("dotenv").config();
 const express = require('express')
 const router = express.Router();
 
 const Bill = require('../models/bill');
 const BillDetail = require('../models/billDetail');
 const Ingredient = require('../models/ingredient');
+const {jwtVerify} = require("jose");
 
+const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+
+async function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if (token == null) return res.sendStatus(401)//check for token present
+  var result = await jwtVerify(token, secret).catch((err)=>{res.sendStatus(403)})
+  if(result){
+      next()
+  }
+}
 // Tạo hóa đơn mới
-router.post('/bill/add-bill', async (req, res) => {
+router.post('/bill/add-bill',authenticateToken, async (req, res) => {
     try {
       const newBill = new Bill(req.body);
       await newBill.save();
@@ -20,7 +33,7 @@ router.post('/bill/add-bill', async (req, res) => {
   });
   
   // Lấy danh sách hóa đơn
-  router.get('/bill/get-list-bill', async (req, res) => {
+  router.get('/bill/get-list-bill',authenticateToken,async (req, res) => {
     try {
       const bills = await Bill.find();
       res.status(200).json({
@@ -33,7 +46,7 @@ router.post('/bill/add-bill', async (req, res) => {
   });
   
   // Tìm hóa đơn theo ID
-  router.get('/bill/:id', async (req, res) => {
+  router.get('/bill/:id',authenticateToken, async (req, res) => {
     try {
       const bill = await Bill.findById(req.params.id);
       if (!bill) return res.status(404).json({ message: 'Bill not found' });
@@ -51,7 +64,7 @@ router.post('/bill/add-bill', async (req, res) => {
   });
   
   // Cập nhật hóa đơn
-router.put('/bill/update-by-id/:id', async (req, res) => {
+router.put('/bill/update-by-id/:id',authenticateToken, async (req, res) => {
     try {
       // Cập nhật hóa đơn
       const updatedBill = await Bill.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -70,7 +83,7 @@ router.put('/bill/update-by-id/:id', async (req, res) => {
   });
   
   // Xóa hóa đơn
-  router.delete('/bill/delete-by-id/:id', async (req, res) => {
+  router.delete('/bill/delete-by-id/:id',authenticateToken, async (req, res) => {
     try {
       const deletedBill = await Bill.findByIdAndDelete(req.params.id);
       if (!deletedBill) return res.status(404).json({ message: 'Bill not found' });
@@ -87,7 +100,7 @@ router.put('/bill/update-by-id/:id', async (req, res) => {
   });
 
   // Thêm chi tiết hóa đơn
-router.post('/billDetail/add', async (req, res) => {
+router.post('/billDetail/add',authenticateToken, async (req, res) => {
     try {
       const newBillDetail = new BillDetail(req.body);
       await newBillDetail.save();
@@ -101,7 +114,7 @@ router.post('/billDetail/add', async (req, res) => {
   });
   
   // Lấy danh sách chi tiết hóa đơn
-  router.get('/billDetail/get-list-billDetail', async (req, res) => {
+  router.get('/billDetail/get-list-billDetail',authenticateToken, async (req, res) => {
     try {
       const billDetails = await BillDetail.find();
       res.status(200).json({
@@ -114,7 +127,7 @@ router.post('/billDetail/add', async (req, res) => {
   });
   
   // Cập nhật chi tiết hóa đơn
-  router.put('/billDetail/update-billDetail/:id', async (req, res) => {
+  router.put('/billDetail/update-billDetail/:id',authenticateToken, async (req, res) => {
     try {
       const updatedBillDetail = await BillDetail.findByIdAndUpdate(req.params.id, req.body, { new: true });
       if (!updatedBillDetail) return res.status(404).json({ message: 'Bill Detail not found' });
@@ -129,7 +142,7 @@ router.post('/billDetail/add', async (req, res) => {
   });
   
   // Xóa chi tiết hóa đơn
-  router.delete('/billDetail/delete-by-id/:id', async (req, res) => {
+  router.delete('/billDetail/delete-by-id/:id',authenticateToken, async (req, res) => {
     try {
       const deletedBillDetail = await BillDetail.findByIdAndDelete(req.params.id);
       if (!deletedBillDetail) return res.status(404).json({ message: 'Bill Detail not found' });
@@ -144,7 +157,7 @@ router.post('/billDetail/add', async (req, res) => {
 
 
   // Thêm nguyên liệu mới
-router.post('/ingredient/add', async (req, res) => {
+router.post('/ingredient/add',authenticateToken, async (req, res) => {
     try {
       const newIngredient = new Ingredient(req.body);
       await newIngredient.save();
@@ -158,7 +171,7 @@ router.post('/ingredient/add', async (req, res) => {
   });
   
   // Lấy danh sách nguyên liệu
-  router.get('/ingredient/get-list', async (req, res) => {
+  router.get('/ingredient/get-list',authenticateToken, async (req, res) => {
     try {
       const ingredients = await Ingredient.find();
       res.status(200).json({
@@ -171,7 +184,7 @@ router.post('/ingredient/add', async (req, res) => {
   });
   
   // Cập nhật nguyên liệu
-  router.put('/ingredient/update-by-id/:id', async (req, res) => {
+  router.put('/ingredient/update-by-id/:id',authenticateToken, async (req, res) => {
     try {
       const updatedIngredient = await Ingredient.findByIdAndUpdate(req.params.id, req.body, { new: true });
       if (!updatedIngredient) return res.status(404).json({ message: 'Ingredient not found' });
@@ -186,7 +199,7 @@ router.post('/ingredient/add', async (req, res) => {
   });
   
   // Xóa nguyên liệu
-  router.delete('/ingredient/delete-by-id/:id', async (req, res) => {
+  router.delete('/ingredient/delete-by-id/:id',authenticateToken, async (req, res) => {
     try {
       const deletedIngredient = await Ingredient.findByIdAndDelete(req.params.id);
       if (!deletedIngredient) return res.status(404).json({ message: 'Ingredient not found' });
