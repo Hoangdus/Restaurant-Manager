@@ -82,6 +82,31 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// Get all users
+router.get("/users", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const payload = await verifyToken(authHeader);
+
+    const user = await User.findById(payload.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User does not exist" });
+    }
+
+    const users = await User.find();
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
+
+
+    res.status(200).json({ message: "List of users", users });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
 // Put user information
 router.put("/user", upload.single("avatar"), async (req, res) => {
   try {
@@ -130,6 +155,7 @@ router.put("/user", upload.single("avatar"), async (req, res) => {
   }
 });
 
+
 // Get user information
 router.get("/user", async (req, res) => {
   try {
@@ -160,6 +186,7 @@ router.get("/user", async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 });
+
 
 // Get tables
 router.get("/tables", async (req, res) => {
