@@ -76,14 +76,39 @@ router.post("/login", async (req, res) => {
       .setExpirationTime("1h")
       .sign(secret);
 
-    res.status(200).json({ message: "Login successfully", token });
+    res.status(200).json({ message: "Login successfully", token, role: user.role });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
+// Get all users
+router.get("/users", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const payload = await verifyToken(authHeader);
+
+    const user = await User.findById(payload.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User does not exist" });
+    }
+
+    const users = await User.find();
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
+
+
+    res.status(200).json({ message: "List of users", users });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
 });
 
 // Put user information
-router.put("/user/:id", upload.single("avatar"), async (req, res) => {
+router.put("/user", upload.single("avatar"), async (req, res) => {
   try {
     const data = req.body;
     const { file } = req;
@@ -115,7 +140,7 @@ router.put("/user/:id", upload.single("avatar"), async (req, res) => {
     await accountDetail.save();
 
     res.status(200).json({
-      message: "Cập nhật thông tin thành công",
+      message: "Update user successfully",
       user: {
         username: user.username,
         role: user.role,
@@ -126,12 +151,13 @@ router.put("/user/:id", upload.single("avatar"), async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi máy chủ", error });
+    res.status(500).json({ message: "Server error", error });
   }
 });
 
+
 // Get user information
-router.get("/user/:id", async (req, res) => {
+router.get("/user", async (req, res) => {
   try {
     // get header authorization from request
     const authHeader = req.headers.authorization;
@@ -160,6 +186,7 @@ router.get("/user/:id", async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 });
+
 
 // Get tables
 router.get("/tables", async (req, res) => {
